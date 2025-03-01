@@ -2,8 +2,8 @@ use macroquad::prelude::*;
 use std::env;
 
 const TAM_CELULA: f32 = 32.0;
-const LARGURA_PADRAO: i8 = 16;
-const INTERVALO_ATUALIZACAO: f64 = 0.3;
+const RAIO_PADRAO: i8 = 5;
+const INTERVALO_ATUALIZACAO: f64 = 0.1;
 
 type Celula = (i8, i8);
 
@@ -50,7 +50,8 @@ async fn main() {
 
     let args: Vec<String> = env::args().collect();
 
-    let largura_grade = args.get(1).and_then(|s| s.parse().ok()).unwrap_or(LARGURA_PADRAO);
+    let raio = args.get(1).and_then(|s| s.parse().ok()).unwrap_or(RAIO_PADRAO);
+    let largura_grade = raio * 2 + 1;
 
     let mut cobra = Cobra::new(largura_grade);
 
@@ -59,11 +60,24 @@ async fn main() {
     loop {
         clear_background(GRAY);
 
+        if is_key_pressed(KeyCode::Up) && cobra.proximo != BAIXO {
+            cobra.proximo = CIMA;
+        }
+        if is_key_pressed(KeyCode::Down) && cobra.proximo != CIMA {
+            cobra.proximo = BAIXO;
+        }
+        if is_key_pressed(KeyCode::Left) && cobra.proximo != DIREITA {
+            cobra.proximo = ESQUERDA;
+        }
+        if is_key_pressed(KeyCode::Right) && cobra.proximo != ESQUERDA {
+            cobra.proximo = DIREITA;
+        }
+
         // Desenha as linhas horizontais e verticais da grade
         for i in 0..=largura_grade {
             let l = i as f32 * TAM_CELULA;
-            draw_line(l, 0.0, l, TAM_CELULA * largura_grade as f32, 2.0, WHITE);
-            draw_line(0.0, l, TAM_CELULA * largura_grade as f32, l, 2.0, WHITE);
+            draw_line(l, 0.0, l, TAM_CELULA * largura_grade as f32, 0.5, WHITE);
+            draw_line(0.0, l, TAM_CELULA * largura_grade as f32, l, 0.5, WHITE);
         }
 
         let frame_atual = get_time();
