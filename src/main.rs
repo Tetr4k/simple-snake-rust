@@ -4,6 +4,37 @@ use std::env;
 const TAM_CELULA: f32 = 32.0;
 const LARGURA_PADRAO: i8 = 16;
 
+type Celula = (i8, i8);
+
+const CIMA:(i8, i8)       = (0, 1);
+const BAIXO:(i8, i8)      = (0, -1);
+const ESQUERDA:(i8, i8)   = (1, 0);
+const DIREITA:(i8, i8)    = (-1, 0);
+
+struct Cobra {
+    cabeca: Celula,
+    corpo: Vec<Celula>,
+    proximo: Celula,
+}
+
+impl Cobra{
+    fn new(largura: i8) -> Self {
+        Cobra {
+            cabeca: (largura/2, largura/2),
+            corpo: Vec::new(),
+            proximo: CIMA,
+        }
+    }
+
+    fn mover(&mut self) {
+        let (cx, cy) = self.cabeca;
+        let (px, py) = self.proximo;
+        let proxima: Celula = (cx + px, cy + py);
+        self.corpo.push(proxima);
+        self.corpo.pop();
+    }
+}
+
 #[macroquad::main("Simple Snake")]
 async fn main() {
     // setup do jogo
