@@ -3,6 +3,7 @@ use std::env;
 
 const TAM_CELULA: f32 = 32.0;
 const LARGURA_PADRAO: i8 = 16;
+const INTERVALO_ATUALIZACAO: f64 = 0.3;
 
 type Celula = (i8, i8);
 
@@ -21,7 +22,7 @@ impl Cobra{
     fn new(largura: i8) -> Self {
         let mut corpo = Vec::new();
 
-        for _ in 0..3{
+        for _ in 0..4{
             corpo.push((largura/2, largura/2));
         }
 
@@ -53,6 +54,8 @@ async fn main() {
 
     let mut cobra = Cobra::new(largura_grade);
 
+    let mut ultimo_frame = get_time();
+
     loop {
         clear_background(GRAY);
 
@@ -63,7 +66,11 @@ async fn main() {
             draw_line(0.0, l, TAM_CELULA * largura_grade as f32, l, 2.0, WHITE);
         }
 
-        cobra.mover();
+        let frame_atual = get_time();
+        if frame_atual - ultimo_frame > INTERVALO_ATUALIZACAO{
+            cobra.mover();
+            ultimo_frame = frame_atual;
+        }
 
         for (x, y) in &cobra.corpo {
             draw_rectangle(
