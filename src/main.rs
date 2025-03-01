@@ -9,7 +9,6 @@ use ponto::Ponto;
 const TAMANHO_CELULA: f32 = 32.0;
 const RAIO_PADRAO: i8 = 5;
 const INTERVALO_ATUALIZACAO: f64 = 0.1;
-const TAMANHO_INICIAL: i8 = 4;
 
 #[macroquad::main("Simple Snake")]
 async fn main() {
@@ -20,7 +19,7 @@ async fn main() {
     let raio = args.get(1).and_then(|s| s.parse().ok()).unwrap_or(RAIO_PADRAO);
     let largura_grade = raio * 2 + 1;
 
-    let mut cobra = Cobra::new(largura_grade, TAMANHO_INICIAL);
+    let mut cobra = Cobra::new(largura_grade);
     let mut ponto = Ponto::new(largura_grade);
 
     let mut ultimo_frame = get_time();
@@ -39,7 +38,7 @@ async fn main() {
 
         let frame_atual = get_time();
         if frame_atual - ultimo_frame > INTERVALO_ATUALIZACAO{
-            cobra.mover();
+            cobra.mover(largura_grade);
             ultimo_frame = frame_atual;
         }
 

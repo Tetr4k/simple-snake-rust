@@ -2,6 +2,8 @@ use macroquad::prelude::*;
 
 type Celula = (i8, i8);
 
+const TAMANHO_INICIAL: i8 = 4;
+
 pub struct Cobra {
     cabeca: Celula,
     corpo: Vec<Celula>,
@@ -9,10 +11,10 @@ pub struct Cobra {
 }
 
 impl Cobra{
-    pub fn new(largura: i8, tamanho_inicial: i8) -> Self {
+    pub fn new(largura: i8) -> Self {
         let mut corpo = Vec::new();
 
-        for _ in 0..tamanho_inicial{
+        for _ in 0..TAMANHO_INICIAL{
             corpo.push((largura/2, largura/2));
         }
 
@@ -23,14 +25,21 @@ impl Cobra{
         }
     }
 
-    pub fn mover(&mut self) {
+    pub fn mover(&mut self, largura: i8) {
         let (cx, cy) = self.cabeca;
         let (px, py) = self.proximo;
         let proxima: Celula = (cx + px, cy + py);
 
-        self.corpo.insert(0, proxima);
-        self.cabeca = proxima;
-        self.corpo.pop();
+        let (x, y) = proxima;
+
+        if x == -1 || x == largura || y == -1 || y == largura || self.corpo.contains(&proxima){
+            *self = Cobra::new(largura);
+        }
+        else{
+            self.corpo.insert(0, proxima);
+            self.cabeca = proxima;
+            self.corpo.pop();
+        }
     }
 
     pub fn capturar_movimento(&mut self) {
