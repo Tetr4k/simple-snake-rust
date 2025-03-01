@@ -19,12 +19,11 @@ impl Ponto{
 
 	pub fn desenhar(&self, tamanho_celula: f32){
 		let (x, y) = self.posicao;
-		draw_rectangle(
-			x as f32 * tamanho_celula,
-			y as f32 * tamanho_celula,
-			tamanho_celula,
-			tamanho_celula,
-			RED,
+		draw_circle(
+			x as f32 * tamanho_celula + tamanho_celula/2.0,
+			y as f32 * tamanho_celula + tamanho_celula/2.0,
+			tamanho_celula/3.0,
+			GOLD,
 		);
 	}
 

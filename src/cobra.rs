@@ -63,13 +63,30 @@ impl Cobra{
     }
 
     pub fn desenhar(&self, tamanho_celula: f32) {
-        for (x, y) in &self.corpo {
+        for (i, &corpo) in self.corpo.iter().enumerate() {
+            let mut cor = BLUE;
+            let mut tamanho = tamanho_celula;
+
+            // TODO: mudar a cor do corpo da cobra
+            //if i % 2 == 0 {
+            //    cor = DARKGREEN;
+            //}
+
+            //if i == 0 {
+            //    tamanho = tamanho_celula * 1.2;
+            //}
+            
+            //if i == self.corpo.len() - 1 {
+            //    tamanho = tamanho_celula * 0.4;
+            //}
+            
+            let (x, y) = corpo;
             draw_rectangle(
-                *x as f32 * tamanho_celula,
-                *y as f32 * tamanho_celula,
-                tamanho_celula,
-                tamanho_celula,
-                GREEN,
+                x as f32 * tamanho_celula,
+                y as f32 * tamanho_celula,
+                tamanho,
+                tamanho,
+                cor,
             );
         }
     }
