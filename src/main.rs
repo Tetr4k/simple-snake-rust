@@ -3,6 +3,9 @@ use std::env;
 mod cobra;
 use cobra::Cobra;
 
+mod ponto;
+use ponto::Ponto;
+
 const TAMANHO_CELULA: f32 = 32.0;
 const RAIO_PADRAO: i8 = 5;
 const INTERVALO_ATUALIZACAO: f64 = 0.1;
@@ -18,6 +21,7 @@ async fn main() {
     let largura_grade = raio * 2 + 1;
 
     let mut cobra = Cobra::new(largura_grade, TAMANHO_INICIAL);
+    let mut ponto = Ponto::new(largura_grade);
 
     let mut ultimo_frame = get_time();
 
@@ -39,7 +43,13 @@ async fn main() {
             ultimo_frame = frame_atual;
         }
 
+        if cobra.get_cabeca() == ponto.get_posicao() {
+            cobra.cresce();
+            ponto = Ponto::new(largura_grade);
+        }
+
         cobra.desenhar(TAMANHO_CELULA);
+        ponto.desenhar(TAMANHO_CELULA);
 
         next_frame().await
     }

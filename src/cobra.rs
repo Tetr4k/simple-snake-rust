@@ -4,8 +4,8 @@ type Celula = (i8, i8);
 
 pub struct Cobra {
     cabeca: Celula,
-    pub corpo: Vec<Celula>,
-    pub proximo: Celula,
+    corpo: Vec<Celula>,
+    proximo: Celula,
 }
 
 impl Cobra{
@@ -63,5 +63,13 @@ impl Cobra{
                 GREEN,
             );
         }
+    }
+
+    pub fn cresce(&mut self) {
+        self.corpo.push(self.cabeca);
+    }
+
+    pub fn get_cabeca(&self) -> Celula {
+        self.cabeca
     }
 }
