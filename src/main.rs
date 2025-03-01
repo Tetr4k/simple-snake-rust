@@ -1,48 +1,12 @@
 use macroquad::prelude::*;
 use std::env;
+mod cobra;
+use cobra::Cobra;
 
-const TAM_CELULA: f32 = 32.0;
+const TAMANHO_CELULA: f32 = 32.0;
 const RAIO_PADRAO: i8 = 5;
 const INTERVALO_ATUALIZACAO: f64 = 0.1;
-
-type Celula = (i8, i8);
-
-const CIMA:(i8, i8)       = (0, -1);
-const BAIXO:(i8, i8)      = (0, 1);
-const ESQUERDA:(i8, i8)   = (-1, 0);
-const DIREITA:(i8, i8)    = (1, 0);
-
-struct Cobra {
-    cabeca: Celula,
-    corpo: Vec<Celula>,
-    proximo: Celula,
-}
-
-impl Cobra{
-    fn new(largura: i8) -> Self {
-        let mut corpo = Vec::new();
-
-        for _ in 0..4{
-            corpo.push((largura/2, largura/2));
-        }
-
-        Cobra {
-            cabeca: corpo[0],
-            corpo,
-            proximo: CIMA,
-        }
-    }
-
-    fn mover(&mut self) {
-        let (cx, cy) = self.cabeca;
-        let (px, py) = self.proximo;
-        let proxima: Celula = (cx + px, cy + py);
-
-        self.corpo.insert(0, proxima);
-        self.cabeca = proxima;
-        self.corpo.pop();
-    }
-}
+const TAMANHO_INICIAL: i8 = 4;
 
 #[macroquad::main("Simple Snake")]
 async fn main() {
@@ -53,31 +17,20 @@ async fn main() {
     let raio = args.get(1).and_then(|s| s.parse().ok()).unwrap_or(RAIO_PADRAO);
     let largura_grade = raio * 2 + 1;
 
-    let mut cobra = Cobra::new(largura_grade);
+    let mut cobra = Cobra::new(largura_grade, TAMANHO_INICIAL);
 
     let mut ultimo_frame = get_time();
 
     loop {
         clear_background(GRAY);
 
-        if is_key_pressed(KeyCode::Up) && cobra.proximo != BAIXO {
-            cobra.proximo = CIMA;
-        }
-        if is_key_pressed(KeyCode::Down) && cobra.proximo != CIMA {
-            cobra.proximo = BAIXO;
-        }
-        if is_key_pressed(KeyCode::Left) && cobra.proximo != DIREITA {
-            cobra.proximo = ESQUERDA;
-        }
-        if is_key_pressed(KeyCode::Right) && cobra.proximo != ESQUERDA {
-            cobra.proximo = DIREITA;
-        }
+        cobra.capturar_movimento();
 
         // Desenha as linhas horizontais e verticais da grade
         for i in 0..=largura_grade {
-            let l = i as f32 * TAM_CELULA;
-            draw_line(l, 0.0, l, TAM_CELULA * largura_grade as f32, 0.5, WHITE);
-            draw_line(0.0, l, TAM_CELULA * largura_grade as f32, l, 0.5, WHITE);
+            let l = i as f32 * TAMANHO_CELULA;
+            draw_line(l, 0.0, l, TAMANHO_CELULA * largura_grade as f32, 0.5, WHITE);
+            draw_line(0.0, l, TAMANHO_CELULA * largura_grade as f32, l, 0.5, WHITE);
         }
 
         let frame_atual = get_time();
@@ -86,15 +39,7 @@ async fn main() {
             ultimo_frame = frame_atual;
         }
 
-        for (x, y) in &cobra.corpo {
-            draw_rectangle(
-                *x as f32 * TAM_CELULA,
-                *y as f32 * TAM_CELULA,
-                TAM_CELULA,
-                TAM_CELULA,
-                GREEN
-            );
-        }
+        cobra.desenhar(TAMANHO_CELULA);
 
         next_frame().await
     }
